@@ -1,13 +1,9 @@
 <html><head>
-<title>Share my device with an iPhone</title></head>
+<title>control a screen</title></head>
 <meta name="viewport" content="width=device-width">
 <link href="https://pi.pe/pipe.css" media="all" rel="stylesheet" />
-
-<style type="text/css">
-    img{border:thick solid white;}
-</style>
-    <script src="https://pi.pe/iot/js/jquery-1.8.3.js"></script>
-    <script src="https://pi.pe/iot/js/phono.sdp.js"></script>
+<script src="https://pi.pe/iot/js/jquery-1.8.3.js"></script>
+<script src="https://pi.pe/iot/js/phono.sdp.js"></script>
 <script type="text/javascript">
     (function () {
         function getFinger(descsdp) {
@@ -107,17 +103,9 @@
             PipeDb.whoAmI(gotId, function(err) {
                 console.log("could not create identity " + err)
             });
-            $('#pressme').hide();
         });
     </script>
-    <h1>Share this device by scanning it with another.</h1>
-    <div id="qr" class="qr">
-
-    </div>
-    <div id="result"> Get this scanned by a the owner's phone to send morse to the sculpture.</div>
-<input style="font-size: xx-large;" id="pressme" type="button" value="Send" />
-
-
+    <h1>Control this screen</h1>
 
 </body>
 </html>
