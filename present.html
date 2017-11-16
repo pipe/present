@@ -73,9 +73,9 @@
             }).catch (that.logError);
         }
         function sendUrl(d){
-            var page = a.firstElementChild.src;
-            var cmd = {draw:page};
-            console.log("sending cmd");
+            var page = d.firstElementChild.src;
+            var cmd = {url:page};
+            console.log("sending cmd"+cmd);
             pipe.send(cmd);
         }
         function makedc(tofinger,n) {
