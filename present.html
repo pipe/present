@@ -74,7 +74,7 @@
         }
         function sendUrl(d){
             var page = d.firstElementChild.src;
-            var cmd = {url:page};
+            var cmd = JSON.stringify({url:page});
             console.log("sending cmd"+cmd);
             pipe.send(cmd);
         }
@@ -125,7 +125,7 @@
         });
     </script>
 <h1 id="title" class="text-center">Remote presenter</h1>
-<div id="myCarousel" class="carousel slide">
+<div id="myCarousel" class="carousel slide" data-ride="false">
   <div class="carousel-inner" role="listbox">
     <div class="carousel-item active" id="1">
       <img class="d-block img-fluid" src="slides/wireconfdevice.001.jpeg" />
