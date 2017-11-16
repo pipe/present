@@ -91,7 +91,6 @@
                 });
                 return promise;
             };
-            duct.setOnextra(onextra);
             duct.setOnDataChannel(onNewDc);
             duct.connect().then(function (d) {
                 console.log("connected as " + id);
