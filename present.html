@@ -95,9 +95,10 @@
             duct.setOnDataChannel(onNewDc);
             duct.connect().then(function (d) {
                 console.log("connected as " + id);
-		var params = new URLSearchParams(document.location.search.substring(1));
-                let q = params.get("q"); // is the string "Jonathan"
-                let n = document.location.hash.substring(1);
+                let h = document.location.hash.substring(1);
+                var bs = h.split(":");
+                var q= bs[0];
+                var n = bs[1];
                 console.log("Q = "+q+" n= "+n);
 		duct.setNonce(n);
                 makedc(q);
