@@ -66,11 +66,13 @@
                 });
             }).catch (that.logError);
         }
-        function makedc(tofinger) {
+        function makedc(tofinger,n) {
             duct.setTo(tofinger);
+	    duct.setNonce(n);
             channel = duct.createDataChannel("screen", {});
             fakeonn();
             channel.onopen = function() {
+		    console.log ("have pipe");
             };
             channel.onmessage = function(message) {};
             channel.onclose = function() {};
@@ -95,8 +97,7 @@
                 var q= bs[0];
                 var n = bs[1];
                 console.log("Q = "+q+" n= "+n);
-		duct.setNonce(n);
-                makedc(q);
+		makedc(q,n);
             });
         }
         $(document).ready(function() {
