@@ -1,0 +1,123 @@
+<html><head>
+<title>Share my device with an iPhone</title></head>
+<meta name="viewport" content="width=device-width">
+<link href="https://pi.pe/pipe.css" media="all" rel="stylesheet" />
+
+<style type="text/css">
+    img{border:thick solid white;}
+</style>
+    <script src="https://pi.pe/iot/js/jquery-1.8.3.js"></script>
+    <script src="https://pi.pe/iot/js/phono.sdp.js"></script>
+<script type="text/javascript">
+    (function () {
+        function getFinger(descsdp) {
+            var sdp = Phono.sdp.parseSDP(descsdp)
+            var myfp = JSON.stringify(sdp.contents[0].fingerprint.print);
+            myfp = myfp.split(":").join("");
+            myfp = myfp.split('"').join("");
+            console.log("fingerprint is " + myfp)
+            return myfp;
+        };
+
+        PipeDb = {
+            addMyCertToPeerConf: function (peerconf, mkpc) {
+                mkpc();
+            },
+            dbAddPrint: function(print, doneCB) {
+                console.log("pretending to Add a new print ");
+                doneCB(print);
+            },
+            whoAmI: function (okCB, failCB) {
+                var peerconfig = {
+                    "iceServers": [
+                        {urls: "stun:146.148.121.175:3478"},
+                        {urls: "turn:146.148.121.175:3478?transport=udp", 'credential': 'charliebrown', 'username': 'owner'},
+                    ],
+                    "bundlePolicy":"max-bundle","iceCandidatePoolSize":1
+                };
+                var pc = new RTCPeerConnection(peerconfig, null);
+                pc.createDataChannel('echo', {});
+                pc.createOffer()
+                    .then(function (localDesc) {
+                        var myfp = getFinger(localDesc.sdp);
+                        okCB(myfp,pc);
+                    })
+                    .catch(function (error) {
+                        failCB(error);
+                    });
+            }
+        };
+    }());
+</script>
+    <script src="js/pipeDuct.js"></script>
+    <script src="js/qrcode.js"></script>
+ <script type="text/javascript">
+        var id = undefined;
+        var duct = null;
+        var pipe;
+
+        function onNewDc(channel) {
+            console.log("New DC ")
+            pipe.onmessage = onDcMessage;
+        }
+        function fakeonn(){
+            var pc = duct.peerCon;
+            var that = duct;
+            pc.createOffer(that.sdpConstraints).then(desc => {
+                pc.setLocalDescription(desc).then( _ => {
+                    console.log("Set Local description");
+                    that.sendSDP(pc);
+                });
+            }).catch (that.logError);
+        }
+        function makedc(tofinger) {
+            duct.setTo(tofinger);
+            channel = duct.createDataChannel("screen", {});
+            fakeonn();
+            channel.onopen = function() {
+            };
+            channel.onmessage = function(message) {};
+            channel.onclose = function() {};
+        }
+
+        function gotId(liid,wcpc) {
+            id = liid;
+            duct = new PipeDuct(id);
+            duct.connect = function() {
+                var that = this;
+
+                var promise = new Promise(function(resolve, reject) {
+                    that.withPc(wcpc, resolve);
+                });
+                return promise;
+            };
+            duct.setOnextra(onextra);
+            duct.setOnDataChannel(onNewDc);
+            duct.connect().then(function (d) {
+                console.log("connected as " + id);
+		var params = new URLSearchParams(document.location.search.substring(1));
+                let q = params.get("q"); // is the string "Jonathan"
+                let n = document.location.hash.substring(1);
+                console.log("Q = "+q+" n= "+n);
+		duct.setNonce(n);
+                makedc(q);
+            });
+        }
+        $(document).ready(function() {
+            PipeDb.whoAmI(gotId, function(err) {
+                console.log("could not create identity " + err)
+            });
+            $('#pressme').hide();
+        });
+    </script>
+    <h1>Share this device by scanning it with another.</h1>
+    <div id="qr" class="qr">
+
+    </div>
+    <div id="result"> Get this scanned by a the owner's phone to send morse to the sculpture.</div>
+<input style="font-size: xx-large;" id="pressme" type="button" value="Send" />
+
+
+
+</body>
+</html>
